@@ -17,10 +17,19 @@ export class MailgunChannel implements MessagingChannel<MailgunMessage, any> {
   private client: any;
 
   async send(ctx: MessageContext<MailgunMessage>): Promise<any> {
-    return await this.client.messages.create(ctx.config.domain, {
+    const data: any = {
       from: ctx.message.from || ctx.config.defaultFrom,
-      ...ctx.message,
-    });
+      to: ctx.message.to,
+      subject: ctx.message.subject,
+      text: ctx.message.text,
+      html: ctx.message.html,
+    };
+    for (const key in data) {
+      if (key in data && !Boolean(data[key])) {
+        delete data[key];
+      }
+    }
+    return await this.client.messages.create(ctx.config.domain, data);
   }
 
   async configure(ctx: ChannelContext): Promise<void> {

@@ -3,14 +3,14 @@ import path from "path";
 import {
   FirebaseCloudMessagingChannel,
   MailgunChannel,
-  MailgunEjsChannel,
+  MailgunTemplateChannel,
 } from "./channels";
 import { MessagingChannel } from "./interfaces";
 
 const channelTypes: { [name: string]: any } = {
   fcm: FirebaseCloudMessagingChannel,
   mailgun: MailgunChannel,
-  "mailgun-ejs": MailgunEjsChannel,
+  "mailgun-template": MailgunTemplateChannel,
 };
 
 export const channels: {
