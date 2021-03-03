@@ -1,27 +1,31 @@
 import dotenv from "dotenv";
 import express from "express";
 import path from "path";
+import { configureChannels } from "./channel-hub";
+import queueRouter from "./controllers/queue-controller";
 
-// initialize configuration
 dotenv.config();
 
-// port is now available to the Node.js runtime
-// as if it were an environment variable
 const port = process.env.SERVER_PORT;
 
 const app = express();
 
-// Configure Express to use EJS
+process.env.APP_ROOT = __dirname;
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-// define a route handler for the default home page
-app.get("/", (req, res) => {
-  // render the index template
-  res.render("index");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post("/render/:template", (req, res) => {
+  res.render(req.params.template, req.body);
 });
 
-// start the express server
+app.use("/queue", queueRouter);
+
+configureChannels();
+
 app.listen(port, () => {
   // tslint:disable-next-line:no-console
   console.log(`server started at http://localhost:${port}`);
