@@ -3,6 +3,8 @@ import {
   MessageContext,
   MessagingChannel,
 } from "../interfaces";
+// importing mailgun using non ES module because mailgun have some
+// declaration issues with lodash and other packages
 import { createClient } from "../vendor/mailgun-client";
 
 export interface MailgunMessage {
