@@ -9,17 +9,20 @@ export interface ValidationResult<Error = ErrorObject> {
 
 export class Template {
   public readonly name: string;
+  public readonly exampleData?: any;
   private compiledTemplate: ejs.AsyncTemplateFunction;
   private compiledValidator?: AsyncValidateFunction;
 
   constructor(
     name: string,
     compiledTemplate: ejs.AsyncTemplateFunction,
-    compiledValidator?: AsyncValidateFunction
+    compiledValidator?: AsyncValidateFunction,
+    exampleData?: any
   ) {
     this.name = name;
     this.compiledTemplate = compiledTemplate;
     this.compiledValidator = compiledValidator;
+    this.exampleData = exampleData;
   }
 
   public async validate(data: any): Promise<ValidationResult> {
@@ -42,6 +45,7 @@ export class Template {
     const templateContent = await Template.readFile(templatePath);
     const compiledTemplate = ejs.compile(templateContent, { async: true });
     let compiledValidator: AsyncValidateFunction | undefined;
+    let exampleData: any;
 
     if (schemaPath) {
       const schemaContent = await Template.readFile(schemaPath);
@@ -49,9 +53,10 @@ export class Template {
       const schema: AsyncSchema = { ...schemaJson, $async: true };
       const ajv = new Ajv();
       compiledValidator = ajv.compile(schema);
+      exampleData = schemaJson?.examples?.[0];
     }
 
-    return new Template(name, compiledTemplate, compiledValidator);
+    return new Template(name, compiledTemplate, compiledValidator, exampleData);
   }
 
   private static async readFile(filePath: string): Promise<string> {

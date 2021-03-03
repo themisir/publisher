@@ -24,10 +24,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/queue", createQueueRouter());
-app.post("/render/:template*", async (req, res) => {
-  const template = renderer.find(req.params.template);
-  const result = await template.render(req.body);
-  res.status(200).contentType("html").send(result);
+app.get("/render/:template(*)", async (req, res) => {
+  try {
+    const template = renderer.find(req.params.template);
+    const result = await template.render(template.exampleData);
+    res.status(200).contentType("html").send(result);
+  } catch (error) {
+    res.status(500).contentType("text/plain").send(error.toString());
+  }
+});
+
+app.get("/templates", (req, res) => {
+  res.json(
+    Object.values(renderer.templates).map((t) => ({
+      name: t.name,
+      example: t.exampleData,
+    }))
+  );
 });
 
 configureChannels();
