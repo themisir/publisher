@@ -18,5 +18,6 @@ WORKDIR /app
 COPY --from=build /src/package.json .
 COPY --from=build /src/node_modules node_modules
 COPY --from=build /src/dist dist
+ENV NODE_ENV=production
 ENV SERVER_PORT=80
 ENTRYPOINT [ "yarn", "start" ]

@@ -2,16 +2,16 @@ import dotenv from "dotenv";
 import express from "express";
 import path from "path";
 import { configureChannels } from "./channel-hub";
-import createQueueRouter from "./controllers/queue-controller";
+import queueRouter from "./controllers/queue-controller";
+import { logger } from "./logger";
 import { TemplateRenderer } from "./template/template-renderer";
 
+// Configure environment variables
 dotenv.config();
+process.env.APP_ROOT = __dirname;
 
 const port = process.env.SERVER_PORT;
-
 const app = express();
-
-process.env.APP_ROOT = __dirname;
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -23,7 +23,7 @@ renderer.initialize();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/queue", createQueueRouter());
+app.use("/queue", queueRouter);
 app.get("/render/:template(*)", async (req, res) => {
   try {
     const template = renderer.find(req.params.template);
@@ -46,6 +46,5 @@ app.get("/templates", (req, res) => {
 configureChannels();
 
 app.listen(port, () => {
-  // tslint:disable-next-line:no-console
-  console.log(`server started at http://localhost:${port}`);
+  logger.info(`Server started at http://localhost:%d`, port);
 });
