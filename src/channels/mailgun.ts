@@ -1,11 +1,12 @@
+import Mailgun from "mailgun.js";
 import {
   ChannelContext,
   MessageContext,
   MessagingChannel,
 } from "../interfaces";
-// importing mailgun using non ES module because mailgun have some
-// declaration issues with lodash and other packages
-import { createClient } from "../vendor/mailgun-client";
+
+// tslint:disable-next-line:no-var-requires
+const mailgun = new Mailgun(require("form-data"));
 
 export interface MailgunMessage {
   from: string;
@@ -35,6 +36,6 @@ export class MailgunChannel implements MessagingChannel<MailgunMessage, any> {
   }
 
   async configure(ctx: ChannelContext): Promise<void> {
-    this.client = createClient({ username: "api", ...ctx.config });
+    this.client = mailgun.client({ username: "api", ...ctx.config });
   }
 }
