@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import {
+  DiscordChannel,
   FirebaseCloudMessagingChannel,
   MailgunChannel,
   MailgunTemplateChannel,
@@ -11,6 +12,7 @@ const channelTypes: { [name: string]: any } = {
   fcm: FirebaseCloudMessagingChannel,
   mailgun: MailgunChannel,
   "mailgun-template": MailgunTemplateChannel,
+  discord: DiscordChannel,
 };
 
 export const channels: {
